@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Import useLocation
+import { Link, useLocation } from "react-router-dom"; 
 import '../assets/css/Navbar.css';
 
 const Navbar = () => {
   const [isProfileVisible, setIsProfileVisible] = useState(false);
-  const location = useLocation(); // Get the current location (path)
-
+  const location = useLocation(); 
   const toggleProfileSection = () => {
     setIsProfileVisible((prev) => !prev);
   };
 
-  // Conditionally render based on the current path
   const isHomePage = location.pathname === "/"; 
 
   return (
@@ -21,14 +19,12 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="navbar-right">
-        {/* Conditionally render 'Add Item' button and profile if not on Home page */}
         {!isHomePage && (
           <>
             <Link to="/add-item" className="btn-add-item">
               Add Item
             </Link>
 
-            {/* Profile Section */}
             <div className="profile-section">
               <img
                 src="https://via.placeholder.com/40"
@@ -48,7 +44,6 @@ const Navbar = () => {
           </>
         )}
         
-        {/* If on Home page, show "Get Started" */}
         {isHomePage && (
           <Link to="/login" className="btn-get-started">
             Get Started

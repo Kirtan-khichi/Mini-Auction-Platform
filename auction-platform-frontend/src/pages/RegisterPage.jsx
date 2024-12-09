@@ -3,7 +3,7 @@ import { auth } from '../services/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../assets/css/AuthPage.css'; // Import CSS
+import '../assets/css/AuthPage.css'; 
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -32,7 +32,7 @@ const RegisterPage = () => {
         uid: user.uid,
       };
 
-      await axios.post('http://localhost:5000/api/users', userData);
+      await axios.post('https://mini-auction-platform.onrender.com/api/users', userData);
 
       navigate('/login');
     } catch (error) {

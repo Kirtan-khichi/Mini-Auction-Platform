@@ -12,7 +12,7 @@ const SignUp = () => {
     try {
       await auth.createUserWithEmailAndPassword(email, password);
       alert('User created successfully');
-      navigate('http://localhost:5000/login'); 
+      navigate('hhttps://mini-auction-platform.onrender.com/login'); 
     } catch (error) {
       alert(error.message);
     }

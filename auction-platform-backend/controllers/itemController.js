@@ -1,10 +1,7 @@
-// controllers/itemController.js
 const Item = require('../models/Item');
 
 const createItem = async (req, res) => {
-  console.log('Request Body:', req.body);  // Log the incoming request body
-
-  const { name, description, startingPrice, sellerID, images } = req.body;
+  const { name, description, startingPrice, sellerID, images, endTime, maxAmount } = req.body;
 
   try {
     if (!images || images.length === 0) {
@@ -17,19 +14,21 @@ const createItem = async (req, res) => {
       startingPrice,
       currentBid: startingPrice,
       sellerID,
-      images 
+      images,
+      endTime: endTime ? new Date(endTime) : null, 
+      maxAmount: maxAmount || null 
     });
 
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
-    console.error('Error creating item:', error);  // Log the error
+    console.error('Error creating item:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
 
-// Get All Items (Auction)
+
 const getAllItems = async (req, res) => {
   try {
     const items = await Item.find();

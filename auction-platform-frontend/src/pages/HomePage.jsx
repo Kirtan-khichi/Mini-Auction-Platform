@@ -3,7 +3,6 @@ import Pusher from 'pusher-js';
 import { getAuth } from 'firebase/auth';
 import '../assets/css/style.css';
 
-
 const HomePage = () => {
     const [items, setItems] = useState([]);
     const [userID, setUserID] = useState('');
@@ -23,25 +22,37 @@ const HomePage = () => {
             cluster: 'ap2',
         });
         const channel = pusher.subscribe('auction-channel');
+        
         channel.bind('new-bid', function (data) {
+            console.log('Received new-bid event:', data);
             setItems((prevItems) =>
                 prevItems.map((item) =>
                     item._id === data.itemID ? { ...item, currentBid: data.bidAmount } : item
                 )
             );
         });
+        
+        channel.bind('auction-ended', function (data) {
+            console.log('Received auction-ended event:', data);
+            setItems((prevItems) =>
+                prevItems.map((item) =>
+                    item._id === data.itemID ? { ...item, isAuctioned: data.isAuctioned } : item
+                )
+            );
+        });
+        
         return () => {
-            pusher.unsubscribe('auction-channel');
+            channel.unbind_all();
+            channel.unsubscribe();
         };
     }, []);
+    
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/items')
+        fetch('https://mini-auction-platform.onrender.com/api/items')
             .then((response) => response.json())
             .then((data) => setItems(data))
-            .catch((error) => console.error('Error:', error));
-            console.log("data", items)
-
+            .catch((error) => console.error('Error fetching items:', error));
     }, []);
 
     const placeBid = async (itemID, bidAmount) => {
@@ -57,15 +68,15 @@ const HomePage = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/bids', {
+            const response = await fetch('https://mini-auction-platform.onrender.com/api/bids', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bidData),
             });
             const data = await response.json();
 
-            if (response.status === 201) {
-                alert(`Bid of ₹${bidAmount} placed successfully!`);
+            if (response.status === 201 || response.status === 200) {
+                alert(data.message || `Bid of ₹${bidAmount} placed successfully!`);
             } else {
                 alert(data.error || 'Something went wrong.');
             }
@@ -85,7 +96,7 @@ const HomePage = () => {
                             {item.images && item.images.map((imageUrl, index) => (
                                 <img
                                     key={index}
-                                    src={imageUrl}  
+                                    src={imageUrl}
                                     alt={`${item.name} - ${index + 1}`}
                                     className="auction-item-image"
                                 />
@@ -95,18 +106,25 @@ const HomePage = () => {
                         <p>{item.description}</p>
                         <p>Starting Price: ₹{item.startingPrice}</p>
                         <p>Current Bid: ₹{item.currentBid}</p>
-                        <button
-                            onClick={() => {
-                                const bidAmount = prompt('Enter your bid amount:', item.currentBid + 1);
-                                if (bidAmount && bidAmount > item.currentBid) {
-                                    placeBid(item._id, parseInt(bidAmount));
-                                } else {
-                                    alert('Please enter a valid bid amount.');
-                                }
-                            }}
-                        >
-                            Bid Now
-                        </button>
+                        {item.maxAmount && <p>Money Threshold: ₹{item.maxAmount}</p>}
+                        {item.endTime && <p>Ends At: {new Date(item.endTime).toLocaleString()}</p>}
+                        {item.isAuctioned ? (
+                            <p className="auctioned-status">Sold</p>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    const bidAmount = prompt('Enter your bid amount:', item.currentBid + 1);
+                                    const numericBid = parseFloat(bidAmount);
+                                    if (bidAmount && numericBid > item.currentBid) {
+                                        placeBid(item._id, numericBid);
+                                    } else {
+                                        alert('Please enter a valid bid amount greater than the current bid.');
+                                    }
+                                }}
+                            >
+                                Bid Now
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>

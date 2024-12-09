@@ -6,7 +6,7 @@ const ItemPage = ({ match }) => {
   const [item, setItem] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/items/${match.params.id}`)
+    axios.get(`https://mini-auction-platform.onrender.com/api/items/${match.params.id}`)
       .then(response => setItem(response.data))
       .catch(error => console.error(error));
   }, [match.params.id]);

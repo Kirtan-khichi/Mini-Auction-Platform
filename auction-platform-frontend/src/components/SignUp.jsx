@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { auth } from '../services/firebase'; // No change needed here
+import { auth } from '../services/firebase'; 
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';  // Added import for function
+import { createUserWithEmailAndPassword } from 'firebase/auth';  
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -11,9 +11,9 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);  // Adjusted method
+      await createUserWithEmailAndPassword(auth, email, password);  
       alert('User created successfully');
-      navigate('/login'); // Redirect to login after successful sign-up
+      navigate('/login'); 
     } catch (error) {
       alert(error.message);
     }

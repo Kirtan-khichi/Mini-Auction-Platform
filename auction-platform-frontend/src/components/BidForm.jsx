@@ -6,7 +6,7 @@ const BidForm = ({ itemId }) => {
 
   const handleBidSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/bids', { itemId, bidAmount }) // Replace with actual API
+    axios.post('https://mini-auction-platform.onrender.com/api/bids', { itemId, bidAmount }) 
       .then(response => {
         alert('Bid placed successfully');
       })

@@ -2,17 +2,19 @@ import React, { useState, useEffect } from "react";
 import { uploadImage } from "../services/firebaseService";
 import { getAuth, onAuthStateChanged } from "firebase/auth"; 
 import { useNavigate } from "react-router-dom";
-import '../assets/css/AddItem.css'; // Import CSS for styling
+import '../assets/css/AddItem.css'; 
 
 function AddItem() {
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [startingPrice, setStartingPrice] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [maxAmount, setMaxAmount] = useState(""); 
   const [itemImages, setItemImages] = useState([]); 
   const [uploading, setUploading] = useState(false);
   const [imageURLs, setImageURLs] = useState([]); 
   const [userID, setUserID] = useState(""); 
-  const [loading, setLoading] = useState(true); // New loading state for Firebase Auth
+  const [loading, setLoading] = useState(true); 
 
   const navigate = useNavigate(); 
 
@@ -20,15 +22,15 @@ function AddItem() {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserID(user.uid); // User is logged in
-        setLoading(false); // Stop loading once auth is checked
+        setUserID(user.uid); 
+        setLoading(false); 
       } else {
-        setLoading(false); // Stop loading if no user is found
-        navigate("/login"); // Redirect to login if user is not logged in
+        setLoading(false); 
+        navigate("/login"); 
       }
     });
 
-    return () => unsubscribe(); // Cleanup on unmount
+    return () => unsubscribe(); 
   }, [navigate]);
 
   const handleImageChange = (e) => {
@@ -42,7 +44,7 @@ function AddItem() {
     e.preventDefault();
   
     if (itemImages.length === 0 || !itemName || !startingPrice) {
-      alert('Please fill out all fields and upload at least one image.');
+      alert('Please fill out all required fields and upload at least one image.');
       return;
     }
   
@@ -59,11 +61,13 @@ function AddItem() {
         description: itemDescription,
         images: uploadedImageURLs,
         startingPrice: parseFloat(startingPrice),
-        currentBid: 0,
+        currentBid: parseFloat(startingPrice),
         sellerID: userID,
+        endTime: endTime ? new Date(endTime) : null, 
+        maxAmount: maxAmount ? parseFloat(maxAmount) : null, 
       };
   
-      const response = await fetch('http://localhost:5000/api/items', {
+      const response = await fetch('https://mini-auction-platform.onrender.com/api/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,6 +85,8 @@ function AddItem() {
       setItemName('');
       setItemDescription('');
       setStartingPrice('');
+      setEndTime('');
+      setMaxAmount('');
       setItemImages([]);
       setImageURLs([]);
       setUploading(false);
@@ -94,7 +100,7 @@ function AddItem() {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>; // Show loading state while checking Firebase Auth state
+    return <div className="loading">Loading...</div>; 
   }
 
   return (
@@ -122,6 +128,20 @@ function AddItem() {
           onChange={(e) => setStartingPrice(e.target.value)}
           className="add-item-input"
           required
+        />
+        <input
+          type="datetime-local"
+          placeholder="End Time (optional)"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          className="add-item-input"
+        />
+        <input
+          type="number"
+          placeholder="Max Bid Amount (optional)"
+          value={maxAmount}
+          onChange={(e) => setMaxAmount(e.target.value)}
+          className="add-item-input"
         />
         <input
           type="file"

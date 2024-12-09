@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import '../assets/css/LandingPage.css';
-// import { frontPage } from "../assets/images/frontPage.png"
+import image from "../assets/images/image.png"
+import techStack from "../assets/images/techStack.png"
 
 const LandingPage = () => {
   return (
+    <>
     <div className="landing-page">
       <div className="landing-content">
         <h1>Welcome to AuctionIt</h1>
@@ -15,12 +17,17 @@ const LandingPage = () => {
       </div>
       <div className="image-side">
         <img
-          src="https://dummyimage.com/500x500/000/fff" // Placeholder image link, replace with actual image
+          src={image} 
           alt="Auction"
           className="landing-image"
         />
       </div>
+      
     </div>
+    <div className='techStack'>
+        <img src={ techStack } alt="" />
+      </div>
+    </>
   );
 };
 

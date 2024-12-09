@@ -3,8 +3,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 60px 80px;
-    background-color: #f4f4f4;
+    padding: 40px 80px;
+    /* background-color: #f4f4f4; */
     height: 100vh;
   }
   
@@ -48,8 +48,13 @@
   }
   
   .landing-image {
-    max-width: 80%;
+    /* max-width: 80%; */
+    width: 800px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
+
+  .techStack{
+    margin-left: 20%;
+  }
